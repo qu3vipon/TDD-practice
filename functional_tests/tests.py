@@ -1,6 +1,6 @@
 import json
 
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
@@ -8,7 +8,7 @@ with open('secrets.json') as f:
     SECRETS = json.load(f)
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome(SECRETS['chromedriver_path'])
         self.browser.implicitly_wait(3)
@@ -31,7 +31,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
-            '작업 아이템 입력'
+            'Enter a to-do Item'
         )
 
         inputbox.send_keys('공작깃털 사기')
@@ -70,3 +70,14 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('그물 만들기', page_text)
 
         self.fail('Finish the test!')
+
+    def test_layout_and_styling(self):
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=10
+        )
