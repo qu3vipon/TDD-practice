@@ -9,4 +9,11 @@ class List(models.Model):
 
 class Item(models.Model):
     text = models.TextField()
-    list = models.ForeignKey(List, default=None, null=True, on_delete=models.CASCADE)
+    list = models.ForeignKey(List, default=None, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('list', 'text')
+        ordering = ['id']
+
+    def __str__(self):
+        return self.text
